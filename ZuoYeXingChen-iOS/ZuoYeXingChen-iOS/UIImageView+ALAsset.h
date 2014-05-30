@@ -11,6 +11,7 @@
 
 @interface UIImageView (ALAsset)
 
+- (void)setImageWithAsset:(ALAsset*)asset;
 - (void)setImageWithAssetURL:(NSURL*)assetURL;
 
 @end

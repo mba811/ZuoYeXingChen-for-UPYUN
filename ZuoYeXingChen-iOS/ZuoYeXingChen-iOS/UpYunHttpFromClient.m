@@ -32,6 +32,7 @@
 		self.bucket = bucket;
 		self.bucketSecret = bucketSecret;
 		self.expiration = 600; // default
+		self.policyParameters = [NSMutableDictionary new];
 		
 		self.requestSerializer = [UpYunRequestSerializer serializer];
 		self.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -46,6 +47,7 @@
 											 failure:(void (^)(NSError *error, id responseObject))failure {
 	[self uploadImageWithALAsset:asset
 											 saveKey:saveKey
+							policyParameters:nil
 											progress:nil
 											 success:success
 											 failure:failure];
@@ -56,7 +58,26 @@
 											progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
 											 success:(void (^)(id responseObject))success
 											 failure:(void (^)(NSError *error, id responseObject))failure {
+	[self uploadImageWithALAsset:asset
+											 saveKey:saveKey
+							policyParameters:nil
+											progress:progress
+											 success:success
+											 failure:failure];
+}
+
+- (void)uploadImageWithALAsset:(ALAsset*)asset
+											 saveKey:(NSString*)saveKey
+							policyParameters:(NSDictionary *)policyParameters
+											progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
+											 success:(void (^)(id responseObject))success
+											 failure:(void (^)(NSError *error, id responseObject))failure {
+
 	NSMutableURLRequest *request;
+	
+	if (policyParameters) {
+		[self.policyParameters addEntriesFromDictionary:policyParameters];
+	}
 	
 	CGImageRef imgRef = [[asset defaultRepresentation] fullResolutionImage];
 	NSData* fileData = UIImageJPEGRepresentation([UIImage imageWithCGImage:imgRef], 1.0f);
@@ -68,38 +89,53 @@
 																													 fileData:fileData
 																														saveKey:saveKey
 																												 expiration:self.expiration
-																									 policyParameters:nil];
+																									 policyParameters:self.policyParameters];
 	
 	AFHTTPRequestOperation *requestOperation = [self HTTPRequestOperationWithRequest:request success:^(__unused AFHTTPRequestOperation *operation, id responseObject) {
-		if (success) {
-			if (!responseObject) {
-				success(nil);
-				return ;
-			}
-			
+		
+		if (!success) {
+			return ;
+		}
+		
+		if (!responseObject) {
+			success(nil);
+			return ;
+		}
+		
+		if ([responseObject isKindOfClass:[NSData class]]) {
 			NSError* jsonError = nil;
-			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:operation.responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
+			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
 			if (!jsonError) {
 				success(jsonDict);
-			} else {
-				success(responseObject);
-			}
-		}
-	} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-		if (failure) {
-			if (!operation.responseObject) {
-				failure(error, nil);
 				return ;
 			}
-			
+		}
+		
+		success(responseObject);
+		
+	} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+		
+		if (!failure) {
+			return ;
+		}
+		
+		id responseObject = operation.responseObject;
+		if (!responseObject) {
+			failure(error, nil);
+			return ;
+		}
+		
+		if ([responseObject isKindOfClass:[NSData class]]) {
 			NSError* jsonError = nil;
-			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:operation.responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
+			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
 			if (!jsonError) {
 				failure(error, jsonDict);
-			} else {
-				failure(error, operation.responseObject);
+				return ;
 			}
 		}
+		
+		failure(error, responseObject);
+		
 	}];
 	
 	if (progress) {
@@ -145,6 +181,10 @@
 	
 	NSMutableURLRequest *request;
 	
+	if (policyParameters) {
+		[self.policyParameters addEntriesFromDictionary:policyParameters];
+	}
+	
 	UpYunRequestSerializer* requestSerializer = (UpYunRequestSerializer*)self.requestSerializer;
 	request = [requestSerializer multipartFormRequestWithUpYunAPIHost:self.APIHost
 																														 bucket:self.bucket
@@ -152,38 +192,53 @@
 																													 filePath:path
 																														saveKey:saveKey
 																												 expiration:self.expiration
-																									 policyParameters:policyParameters];
+																									 policyParameters:self.policyParameters];
 	
 	AFHTTPRequestOperation *requestOperation = [self HTTPRequestOperationWithRequest:request success:^(__unused AFHTTPRequestOperation *operation, id responseObject) {
-		if (success) {
-			if (!responseObject) {
-				success(nil);
-				return ;
-			}
-			
+		
+		if (!success) {
+			return ;
+		}
+		
+		if (!responseObject) {
+			success(nil);
+			return ;
+		}
+		
+		if ([responseObject isKindOfClass:[NSData class]]) {
 			NSError* jsonError = nil;
-			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:operation.responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
+			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
 			if (!jsonError) {
 				success(jsonDict);
-			} else {
-				success(responseObject);
-			}
-		}
-	} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-		if (failure) {
-			if (!operation.responseObject) {
-				failure(error, nil);
 				return ;
 			}
-			
+		}
+		
+		success(responseObject);
+		
+	} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+
+		if (!failure) {
+			return ;
+		}
+		
+		id responseObject = operation.responseObject;
+		if (!responseObject) {
+			failure(error, nil);
+			return ;
+		}
+		
+		if ([responseObject isKindOfClass:[NSData class]]) {
 			NSError* jsonError = nil;
-			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:operation.responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
+			NSDictionary* jsonDict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:&jsonError];
 			if (!jsonError) {
 				failure(error, jsonDict);
-			} else {
-				failure(error, operation.responseObject);
+				return ;
 			}
 		}
+		
+		failure(error, responseObject);
+		
 	}];
 	
 	if (progress) {

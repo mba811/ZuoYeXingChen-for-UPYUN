@@ -76,8 +76,11 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 	self.library = [ALAssetsLibrary new];
 	
 	self.upYunClient = [[UpYunHttpFromClient alloc] initWithUpYunAPIHost:APIHost_Auto
-																														bucket:Bucket
-																											bucketSecret:BucketSecret];
+																																bucket:Bucket
+																													bucketSecret:BucketSecret];
+	
+	NSDictionary* policyParamerters = @{@"notify-url": @"http://zyxc.avosapps.com/upload-image-success"};
+	[self.upYunClient.policyParameters addEntriesFromDictionary:policyParamerters];
 	
 	self.uploadPhotosQueue = [NSMutableArray new];
 	
@@ -85,6 +88,11 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 	[q setMaxConcurrentOperationCount:1];
 	self.uploadOperationQueue = q;
 	
+	[self initDatabase];
+	[self findSavedPhotos];
+}
+
+- (void)initDatabase {
 	ZYDatabaseManager* manager = [ZYDatabaseManager defaultManager];
 	self.readConnection = [manager newConnection];
 	self.writeConnection = [manager newConnection];
@@ -106,16 +114,14 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 																					 selector:@selector(yapDatabaseModified:)
 																							 name:YapDatabaseModifiedNotification
 																						 object:self.readConnection.database];
-	
-	[self findSavedPhotos];
 }
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 																									name:YapDatabaseModifiedNotification
-																								object:self.readConnection.database];
+																								object:_readConnection.database];
 	
-	[self->_uploadOperationQueue cancelAllOperations];
+	[_uploadOperationQueue cancelAllOperations];
 }
 
 - (void)viewWillLayoutSubviews {

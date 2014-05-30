@@ -12,6 +12,21 @@
 
 @implementation UIImageView (ALAsset)
 
+- (void)setImageWithAsset:(ALAsset*)asset {
+	
+	SDImageCache* cache = [SDImageCache sharedImageCache];
+	
+  NSString* key =	[[asset defaultRepresentation].url absoluteString];
+	
+	UIImage* image = [cache imageFromMemoryCacheForKey:key];
+	if (!image) {
+		image = [UIImage imageWithCGImage:asset.thumbnail];
+		[cache storeImage:image forKey:key];
+	}
+	
+	self.image = image;
+}
+
 - (void)setImageWithAssetURL:(NSURL*)assetURL {
 	
 	SDImageCache* cache = [SDImageCache sharedImageCache];
@@ -26,6 +41,7 @@
 	
 	[library assetForURL:assetURL
 					 resultBlock:^(ALAsset *asset) {
+						 
 						 NSURL* now = [asset defaultRepresentation].url;
 						 
 						 CGImageRef imgeRef = [asset thumbnail];
@@ -40,6 +56,7 @@
 							 self.image = image;
 						 });
 					 }
+	 
 					failureBlock:^(NSError *error) {
 						NSLog(@"assetForURL: %@", error);
 						self.image = nil;

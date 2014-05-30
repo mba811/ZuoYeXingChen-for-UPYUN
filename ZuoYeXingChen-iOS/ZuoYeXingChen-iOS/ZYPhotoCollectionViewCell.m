@@ -68,15 +68,19 @@
 - (void)setPhoto:(ZYPhoto *)photo {
 	_photo = photo;
 	self.imageView.image = nil;
-	self.progressView.progress = 0.0f;
 	
 	if (photo.state == ZYXCPhotoStateUploaded) {
 		self.progressView.hidden = YES;
 	} else {
 		self.progressView.hidden = NO;
+		self.progressView.progress = 0.0f;
 	}
 	
-	[self.imageView setImageWithAssetURL:photo.assetURL];
+	if (photo.asset) {
+		[self.imageView setImageWithAsset:photo.asset];
+	} else {
+		[self.imageView setImageWithAssetURL:photo.assetURL];
+	}
 }
 
 /*

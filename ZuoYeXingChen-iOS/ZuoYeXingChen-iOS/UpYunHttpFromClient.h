@@ -18,10 +18,11 @@ static NSString* const APIHost_CTT = @"http://v3.api.upyun.com";
 
 @interface UpYunHttpFromClient : AFHTTPRequestOperationManager
 
+// 全局的expiration
 @property (nonatomic, assign) NSTimeInterval expiration;
 
 // 可以设置一些对于当前bucket是全局的policy参数
-@property (nonatomic, copy) NSMutableDictionary* policyParameters;
+@property (nonatomic, strong) NSMutableDictionary* policyParameters;
 
 
 - (instancetype)initWithUpYunAPIHost:(NSString*)APIHost
@@ -38,6 +39,14 @@ static NSString* const APIHost_CTT = @"http://v3.api.upyun.com";
 											progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
 											 success:(void (^)(id responseObject))success
 											 failure:(void (^)(NSError *error, id responseObject))failure;
+
+- (void)uploadImageWithALAsset:(ALAsset*)asset
+											 saveKey:(NSString*)saveKey
+							policyParameters:(NSDictionary *)policyParameters
+											progress:(void (^)(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite))progress
+											 success:(void (^)(id responseObject))success
+											 failure:(void (^)(NSError *error, id responseObject))failure;
+
 
 - (void)uploadFileWithPath:(NSString *)path
 									 saveKey:(NSString *)saveKey
