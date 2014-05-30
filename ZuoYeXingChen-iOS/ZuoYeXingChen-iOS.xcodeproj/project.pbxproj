@@ -358,6 +358,8 @@
 		2B21D2201937AACD00F26FC9 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B21D21F1937AACD00F26FC9 /* Security.framework */; };
 		2B21D2221937AB5100F26FC9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B21D2211937AB5100F26FC9 /* QuartzCore.framework */; };
 		2B21D2241937AB6F00F26FC9 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B21D2231937AB6F00F26FC9 /* ImageIO.framework */; };
+		2B236BD61938E64D00A1ED9B /* ZYNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B236BD51938E64D00A1ED9B /* ZYNetworkManager.m */; };
+		2B236BD71938E64D00A1ED9B /* ZYNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B236BD51938E64D00A1ED9B /* ZYNetworkManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -741,6 +743,8 @@
 		2B21D21F1937AACD00F26FC9 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		2B21D2211937AB5100F26FC9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2B21D2231937AB6F00F26FC9 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		2B236BD41938E64D00A1ED9B /* ZYNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYNetworkManager.h; sourceTree = "<group>"; };
+		2B236BD51938E64D00A1ED9B /* ZYNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYNetworkManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -841,6 +845,8 @@
 				2B21CFB71937921200F26FC9 /* ZYPhotoCollectionViewCell.m */,
 				2B21CFBA1937921200F26FC9 /* ZYUploadPhotoOperation.h */,
 				2B21CFBB1937921200F26FC9 /* ZYUploadPhotoOperation.m */,
+				2B236BD41938E64D00A1ED9B /* ZYNetworkManager.h */,
+				2B236BD51938E64D00A1ED9B /* ZYNetworkManager.m */,
 				2B21CFD31937923200F26FC9 /* ZYDatabaseManager.h */,
 				2B21CFD41937924300F26FC9 /* ZYDatabaseManager.m */,
 				2B21CFB41937921200F26FC9 /* ZYPhoto.h */,
@@ -1604,6 +1610,7 @@
 				2B21D1A21937995900F26FC9 /* PDFileSystemTypes.m in Sources */,
 				2B21CEF0193790BD00F26FC9 /* YapDatabaseExtension.m in Sources */,
 				2B21CF821937911000F26FC9 /* MKAnnotationView+WebCache.m in Sources */,
+				2B236BD61938E64D00A1ED9B /* ZYNetworkManager.m in Sources */,
 				2B21CEFE193790BD00F26FC9 /* YapDatabaseRelationshipTransaction.m in Sources */,
 				2B21CF38193790BD00F26FC9 /* YapDatabaseConnection.m in Sources */,
 				2B21D1CE1937995900F26FC9 /* NSDate+PDDebugger.m in Sources */,
@@ -1744,6 +1751,7 @@
 				2B21D20E1937A10F00F26FC9 /* DACircularProgressView.m in Sources */,
 				2B21D1E91937995900F26FC9 /* PDDynamicDebuggerDomain.m in Sources */,
 				2B21CFEC1937942E00F26FC9 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
+				2B236BD71938E64D00A1ED9B /* ZYNetworkManager.m in Sources */,
 				2B21CFF61937942E00F26FC9 /* UIRefreshControl+AFNetworking.m in Sources */,
 				2B21D1B71937995900F26FC9 /* PDProfilerDomain.m in Sources */,
 				2B21CF11193790BD00F26FC9 /* YapDatabaseViewRangeOptions.m in Sources */,
