@@ -61,6 +61,8 @@
 }
 
 - (void)layoutSubviews {
+	[super layoutSubviews];
+	
 	self.imageView.frame = self.bounds;
 	self.progressView.frame = CGRectMake(32.0f, 32.0f, 40.0f, 40.0f);
 }
@@ -69,7 +71,10 @@
 	_photo = photo;
 	self.imageView.image = nil;
 	
-	if (photo.state == ZYXCPhotoStateUploaded) {
+	if (photo.state == ZYPhotoStateWaitServerReply) {
+		self.progressView.hidden = NO;
+		self.progressView.progress = 1.0f;
+	} else if (photo.state == ZYPhotoStateUploaded) {
 		self.progressView.hidden = YES;
 	} else {
 		self.progressView.hidden = NO;

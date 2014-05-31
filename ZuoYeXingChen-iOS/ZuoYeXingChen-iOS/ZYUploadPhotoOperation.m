@@ -72,7 +72,7 @@
 	void (^progressBlock)(NSUInteger, long long, long long) = ^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
 		if (totalBytesExpectedToWrite > 0) {
 			CGFloat progress = (CGFloat)totalBytesWritten / totalBytesExpectedToWrite;
-			NSLog(@"%f %lld %lld", progress, totalBytesWritten, totalBytesExpectedToWrite);
+			// NSLog(@"%f %lld %lld", progress, totalBytesWritten, totalBytesExpectedToWrite);
 			
 			[[NSNotificationCenter defaultCenter] postNotificationName:@"ZYXCUploadProgressChanged" object:nil userInfo:@{@"kPhotoMD5": self.photo.md5, @"kProgress": @(progress)}];
 		}

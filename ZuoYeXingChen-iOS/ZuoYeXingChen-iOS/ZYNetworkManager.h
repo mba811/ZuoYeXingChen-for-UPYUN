@@ -13,4 +13,8 @@
 
 + (ZYNetworkManager*)defaultManager;
 
+- (void)getUploadedPhotosWithDirectory:(NSString*)directory
+															 success:(void (^)(id responseObject))success
+															 failure:(void (^)(NSError* error))failure;
+
 @end

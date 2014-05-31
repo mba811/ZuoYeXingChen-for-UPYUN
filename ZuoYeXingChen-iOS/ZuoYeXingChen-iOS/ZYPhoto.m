@@ -13,7 +13,7 @@
 
 - (id)initWithMd5:(NSString*)md5
 						 date:(NSDate*)date
-						state:(ZYXCPhotoState)state {
+						state:(ZYPhotoState)state {
 	self = [super init];
 	if (self) {
 		self.md5 = md5;
@@ -30,6 +30,7 @@
 		self.date = [decoder decodeObjectForKey:@"date"];
 		self.state = [decoder decodeIntForKey:@"state"];
 		self.assetURL = [decoder decodeObjectForKey:@"assetURL"];
+		self.asset = nil;
 	}
 	return self;
 }

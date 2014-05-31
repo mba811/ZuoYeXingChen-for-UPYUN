@@ -10,22 +10,23 @@
 
 
 typedef enum {
-	ZYXCPhotoStateLocal,
-	ZYXCPhotoStateUploaded,
-	ZYXCPhotoStateNotAvailable
-} ZYXCPhotoState;
+	ZYPhotoStateLocal,
+	ZYPhotoStateWaitServerReply,
+	ZYPhotoStateUploaded,
+	ZYPhotoStateNotAvailable
+} ZYPhotoState;
 
 
 @interface ZYPhoto : NSObject
 
 - (id)initWithMd5:(NSString*)md5
 						 date:(NSDate*)date
-						state:(ZYXCPhotoState)state;
+						state:(ZYPhotoState)state;
 
 @property (nonatomic, copy) NSString* md5;
 @property (nonatomic, copy) NSURL* thumbnailURL;
 @property (nonatomic, copy) NSDate* date;
-@property (nonatomic, assign) ZYXCPhotoState state;
+@property (nonatomic, assign) ZYPhotoState state;
 @property (nonatomic, copy) NSURL* assetURL;
 @property (nonatomic, strong) ALAsset* asset; // only for cache purpose
 

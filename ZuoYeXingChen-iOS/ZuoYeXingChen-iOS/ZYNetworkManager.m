@@ -22,13 +22,26 @@ static NSString* const BaseURLString = @"http://zyxc.avosapps.com/";
 }
 
 - (id)initSingleton {
-	NSURL *baseURL = [NSURL URLWithString:BaseURLString];
+	NSURL* baseURL = [NSURL URLWithString:BaseURLString];
 	self = [super initWithBaseURL:baseURL];
 	if (self) {
 		self.requestSerializer = [AFJSONRequestSerializer serializer];
 		self.responseSerializer = [AFJSONResponseSerializer serializer];
 	}
 	return self;
+}
+
+- (void)getUploadedPhotosWithDirectory:(NSString*)directory
+															 success:(void (^)(id responseObject))success
+															 failure:(void (^)(NSError* error))failure {
+	
+	NSDictionary* parameters = @{@"directory": directory};
+	
+	[self GET:@"uploaded-photos" parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+		success(responseObject);
+	} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+		failure(error);
+	}];
 }
 
 @end

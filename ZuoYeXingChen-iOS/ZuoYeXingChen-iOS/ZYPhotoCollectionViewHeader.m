@@ -30,6 +30,8 @@
 }
 
 - (void)layoutSubviews {
+	[super layoutSubviews];
+	
 	self.timeLabel.frame = CGRectMake(10, 2, 310, 40);
 }
 

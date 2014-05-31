@@ -12,6 +12,7 @@
 #import "UIImage+MD5.h"
 #import "ZYPhoto.h"
 #import "ZYDatabaseManager.h"
+#import "ZYNetworkManager.h"
 #import "ZYUploadPhotoOperation.h"
 #import "UpYunHttpFromClient.h"
 #import "YapDatabaseConnection.h"
@@ -79,7 +80,7 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 																																bucket:Bucket
 																													bucketSecret:BucketSecret];
 	
-	NSDictionary* policyParamerters = @{@"notify-url": @"http://zyxc.avosapps.com/upload-image-success"};
+	NSDictionary* policyParamerters = @{@"notify-url": @"http://zyxc.avosapps.com/upload-photo-success"};
 	[self.upYunClient.policyParameters addEntriesFromDictionary:policyParamerters];
 	
 	self.uploadPhotosQueue = [NSMutableArray new];
@@ -89,6 +90,9 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 	self.uploadOperationQueue = q;
 	
 	[self initDatabase];
+	
+	[self getUploadPhotos];
+	
 	[self findSavedPhotos];
 }
 
@@ -128,6 +132,34 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 	[super viewWillLayoutSubviews];
 	
 	self.collectionView.frame = CGRectMake(0, 64, SCREEN_WIDTH, SCREEN_HEIGHT - 64);
+}
+
+- (void)getUploadPhotos {
+	NSString* directory = [AVUser currentUser].username;
+	
+	[[ZYNetworkManager defaultManager] getUploadedPhotosWithDirectory:directory success:^(id responseObject) {
+		NSLog(@"getUploadPhotos success: %@", responseObject);
+		
+		NSDictionary* photos = responseObject[@"photos"];
+		if (photos) {
+			for (NSString* photoMd5 in photos) {
+				[self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *writeTransaction) {
+					ZYPhoto* photo = [writeTransaction objectForKey:photoMd5 inCollection:ZYXCCollectionPhotos];
+					photo.state = ZYPhotoStateUploaded;
+					[writeTransaction setObject:photo
+															 forKey:photoMd5
+												 inCollection:ZYXCCollectionPhotos];
+				}];
+			}
+		}
+		
+		[self getUploadPhotos];
+		
+	} failure:^(NSError *error) {
+		NSLog(@"getUploadPhotos failed: %@", error);
+		
+		[self getUploadPhotos];
+	}];
 }
 
 - (void)yapDatabaseModified:(NSNotification*)notification {
@@ -250,7 +282,7 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 																	 inCollection:ZYXCCollectionPhotos];
 			if (photo) {
 				exists = TRUE;
-				if (photo.state == ZYXCPhotoStateLocal) {
+				if (photo.state == ZYPhotoStateLocal) {
 					photo.asset = photoAsset;
 					[self.uploadPhotosQueue addObject:photo];
 				}
@@ -261,7 +293,7 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
 			NSDate* date = [photoAsset valueForProperty:ALAssetPropertyDate];
 			ZYPhoto* photo = [[ZYPhoto alloc] initWithMd5:md5
 																									 date:date
-																									state:ZYXCPhotoStateLocal];
+																									state:ZYPhotoStateLocal];
 			photo.assetURL = assetURL;
 			photo.asset = photoAsset;
 			[self.uploadPhotosQueue addObject:photo];
@@ -288,8 +320,9 @@ static NSString* const kPhotoHeaderReuseIdentifier = @"PhotoHeaderReuseIdentifie
     ZYPhoto* photo = [self.uploadPhotosQueue firstObject];
 		
 		ZYUploadPhotoOperation* operation = [[ZYUploadPhotoOperation alloc] initWithUpYunClient:self.upYunClient photo:photo directory:directory success:^{
+			NSLog(@"upload %@.jpg completed", photo.md5);
 			[self.writeConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *writeTransaction) {
-				photo.state = ZYXCPhotoStateUploaded;
+				photo.state = ZYPhotoStateWaitServerReply;
 				[writeTransaction setObject:photo
 														 forKey:photo.md5
 											 inCollection:ZYXCCollectionPhotos];
